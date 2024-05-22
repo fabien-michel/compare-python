@@ -1,0 +1,62 @@
+# syntax = docker/dockerfile:experimental
+
+FROM debian:sid
+
+RUN apt update && apt install -y git \
+                                build-essential \
+                                gdb \
+                                lcov \
+                                libbz2-dev \
+                                libffi-dev \
+                                libgdbm-dev \
+                                liblzma-dev \
+                                libncurses5-dev \
+                                libreadline6-dev \
+                                libsqlite3-dev \
+                                libssl-dev \
+                                lzma \
+                                lzma-dev \
+                                tk-dev \
+                                uuid-dev \
+                                xvfb \
+                                zlib1g-dev \
+                                systemtap-sdt-dev
+
+RUN git clone --depth 1 -b 3.12 https://github.com/python/cpython.git
+WORKDIR /cpython
+RUN ./configure --enable-shared --enable-ipv6 --enable-loadable-sqlite-extensions --with-dbmliborder=bdb:gdbm --with-computed-gotos --without-ensurepip --with-system-expat --with-dtrace && \
+    CC=x86_64-linux-gnu-gcc make && \
+    make install
+ENV LD_LIBRARY_PATH="/usr/local/lib/"
+
+# Debian
+# ["'--enable-shared'
+# '--prefix=/usr'
+# '--libdir=/usr/lib/x86_64-linux-gnu'
+# '--enable-ipv6'
+# '--enable-loadable-sqlite-extensions'
+# '--with-dbmliborder=bdb:gdbm'
+# '--with-computed-gotos'
+# '--without-ensurepip'
+# '--with-system-expat'
+# '--with-dtrace'
+# '--with-ssl-default-suites=openssl'
+# '--with-wheel-pkg-dir=/usr/share/python-wheels/'
+# 'MKDIR_P=/bin/mkdir -p'
+# 'CC=x86_64-linux-gnu-gcc'"]
+
+# Arch
+# ["'--prefix=/usr'
+# '--enable-shared'
+# '--with-computed-gotos'
+# '--enable-optimizations'
+# '--with-lto'
+# '--enable-ipv6'
+# '--with-system-expat'
+# '--with-dbmliborder=gdbm:ndbm'
+# '--with-system-libmpdec'
+# '--enable-loadable-sqlite-extensions'
+# '--without-ensurepip'
+# '--with-tzpath=/usr/share/zoneinfo'
+# 'CFLAGS=-march=x86-64 -mtune=generic -O3 -pipe -fno-plt -fexceptions         -Wp,-D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security         -fstack-clash-protection -fcf-protection -g -ffile-prefix-map=/build/python/src=/usr/src/debug/python -flto=auto -ffat-lto-objects'
+# 'LDFLAGS=-Wl,-O1 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now          -Wl,-z,pack-relative-relocs -flto=auto'"]
