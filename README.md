@@ -3,7 +3,7 @@
 ./run.py
 ```
 
-Results on my machine (2024-05-22)
+Results on my machine on arch (2024-05-22)
 ```
 debian-on-docker    	0.7246799930017005	-34.072282393951454%
 ubuntu-on-docker    	0.7611594549998699	-30.75356559169216%
